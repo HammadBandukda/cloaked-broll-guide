@@ -11,6 +11,7 @@
   --bg: #FBF8EF; --surface: #F3EFE2; --line: #E9E6DA; --muted: #454030; --fg: #130F02;
   --accent: #FF550C; --accent-ink: #CC3D00; --flap: #130F02; --cloak: #FF550C;
   --pos: #009933; --neg: #EC4545; --video-bg: #E9E6DA;
+  --scrim: rgba(19, 15, 2, 0.62); --scrim-strong: rgba(19, 15, 2, 0.82); --on-scrim: #FBF8EF; --backdrop: rgba(10, 8, 1, 0.88); --lb-btn: rgba(251, 248, 239, 0.14); --lb-btn-hover: rgba(251, 248, 239, 0.24);
   --display: "Simula", Georgia, "Times New Roman", serif;
   --body: "STK Bureau Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -23,7 +24,6 @@
   --accent: #FF6625; --accent-ink: #FF8A57; --flap: #D0470C; --cloak: #FF6625;
   --pos: #3DBE6B; --neg: #F06A6A; --video-bg: #201C0F; color-scheme: dark; }
 * { box-sizing: border-box; }
-html, body { margin: 0; }
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 56px 96px; }
 .wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 96px; }
@@ -54,7 +54,7 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 .len { color: var(--muted); }
 .line { font-size: 18px; line-height: 1.45; }
 .file { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
-.dl { text-decoration: none; display: inline-block; font: inherit; font-size: 14px; font-weight: 500; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.dl { font: inherit; font-size: 14px; font-weight: 500; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
 .dl:hover { border-color: var(--accent); color: var(--accent-ink); }
 .dl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .dl[disabled] { opacity: 0.6; cursor: default; }
@@ -74,6 +74,27 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 .specs dt, .specs dd { margin: 0; padding: 16px 0; border-bottom: 1px solid var(--line); min-width: 0; }
 .specs dt { font-weight: 500; padding-right: 32px; }
 .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: 15px; }
+html, body { margin: 0; }
+.player { position: relative; border-radius: 12px; overflow: hidden; background: var(--video-bg); }
+.player video { border-radius: 0; border: 0; cursor: zoom-in; }
+.ref .player { border: 1px solid var(--line); }
+.ctrls { position: absolute; top: 10px; right: 10px; display: flex; gap: 8px; opacity: 0; transition: opacity 0.15s ease; }
+.player:hover .ctrls, .player:focus-within .ctrls { opacity: 1; }
+@media (hover: none) { .ctrls { opacity: 1; } }
+.ctrl { width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center; padding: 0; border: 0; cursor: pointer;
+  background: var(--scrim); color: var(--on-scrim); text-decoration: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.ctrl:hover { background: var(--scrim-strong); }
+.ctrl:focus-visible, .lb-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ctrl svg { width: 18px; height: 18px; }
+.lightbox { padding: 0; border: 0; background: transparent; width: min(1280px, calc(100vw - 32px), calc((100vh - 104px) * 16 / 9)); max-width: none; max-height: none; overflow: visible; }
+.lightbox::backdrop { background: var(--backdrop); }
+.lightbox video { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: #000; display: block; }
+.lb-bar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 12px; }
+.lb-btn { height: 40px; min-width: 40px; border-radius: 999px; border: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 12px;
+  background: var(--lb-btn); color: var(--on-scrim); font: inherit; font-size: 15px; font-weight: 500; text-decoration: none; cursor: pointer; }
+.lb-btn:hover { background: var(--lb-btn-hover); }
+.lb-btn svg { width: 18px; height: 18px; }
+.lb-btn.close { padding: 0; width: 40px; }
 @media (max-width: 720px) {
   .ref { grid-template-columns: 1fr; padding: 20px; }
   .specs { grid-template-columns: 1fr; } .specs dt { padding-bottom: 0; border-bottom: 0; }
@@ -113,70 +134,70 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 <div class="sec-head"><h2 id="h-sol">Solution shots</h2><p>In script order. If the host paraphrases, match the clip to the topic.</p></div>
 <div class="grid">
 <article class="shot" id="shot-00">
-<video src="clips/00_Intro_sponsor_logo.mp4#t=1.3" preload="metadata" controls playsinline muted loop aria-label="Shot 00"></video>
+<div class="player"><video data-src="clips/00_Intro_sponsor_logo.mp4" muted loop playsinline preload="none" aria-label="Shot 00"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/00_Intro_sponsor_logo.mp4" data-name="00_Intro_sponsor_logo.mp4" aria-label="Expand Shot 00"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/00_Intro_sponsor_logo.mp4" download="00_Intro_sponsor_logo.mp4" aria-label="Download Shot 00"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">00</span><span class="len">5.0 s</span></div>
 <p class="line">Whenever the host introduces today&rsquo;s sponsor, Cloaked.</p>
-<div class="file"><span>00_Intro_sponsor_logo.mp4</span><a class="dl" href="clips/00_Intro_sponsor_logo.mp4" download="00_Intro_sponsor_logo.mp4">Download</a></div>
+<div class="file"><span>00_Intro_sponsor_logo.mp4</span></div>
 </article>
 <article class="shot" id="shot-02">
-<video src="clips/02_Privacy_platform_orbit.mp4#t=0.8" preload="metadata" controls playsinline muted loop aria-label="Shot 02"></video>
+<div class="player"><video data-src="clips/02_Privacy_platform_orbit.mp4" muted loop playsinline preload="none" aria-label="Shot 02"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/02_Privacy_platform_orbit.mp4" data-name="02_Privacy_platform_orbit.mp4" aria-label="Expand Shot 02"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/02_Privacy_platform_orbit.mp4" download="02_Privacy_platform_orbit.mp4" aria-label="Download Shot 02"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">02</span><span class="len">3.0 s</span></div>
 <p class="line">&ldquo;Cloaked is a personal privacy platform that helps you take back control of your information.&rdquo;</p>
-<div class="file"><span>02_Privacy_platform_orbit.mp4</span><a class="dl" href="clips/02_Privacy_platform_orbit.mp4" download="02_Privacy_platform_orbit.mp4">Download</a></div>
+<div class="file"><span>02_Privacy_platform_orbit.mp4</span></div>
 </article>
 <article class="shot" id="shot-03">
-<video src="clips/03_Data_removal_260_removed.mp4#t=2.6" preload="metadata" controls playsinline muted loop aria-label="Shot 03"></video>
+<div class="player"><video data-src="clips/03_Data_removal_260_removed.mp4" muted loop playsinline preload="none" aria-label="Shot 03"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/03_Data_removal_260_removed.mp4" data-name="03_Data_removal_260_removed.mp4" aria-label="Expand Shot 03"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/03_Data_removal_260_removed.mp4" download="03_Data_removal_260_removed.mp4" aria-label="Download Shot 03"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">03</span><span class="len">3.1 s</span></div>
 <p class="line">&ldquo;It finds your personal information across more than 1,000 data brokers and other sites and helps get it removed.&rdquo;</p>
-<div class="file"><span>03_Data_removal_260_removed.mp4</span><a class="dl" href="clips/03_Data_removal_260_removed.mp4" download="03_Data_removal_260_removed.mp4">Download</a></div>
+<div class="file"><span>03_Data_removal_260_removed.mp4</span></div>
 </article>
 <article class="shot" id="shot-04">
-<video src="clips/04_Ongoing_monitoring_graph.mp4#t=2.2" preload="metadata" controls playsinline muted loop aria-label="Shot 04"></video>
+<div class="player"><video data-src="clips/04_Ongoing_monitoring_graph.mp4" muted loop playsinline preload="none" aria-label="Shot 04"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/04_Ongoing_monitoring_graph.mp4" data-name="04_Ongoing_monitoring_graph.mp4" aria-label="Expand Shot 04"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/04_Ongoing_monitoring_graph.mp4" download="04_Ongoing_monitoring_graph.mp4" aria-label="Download Shot 04"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">04</span><span class="len">2.7 s</span></div>
 <p class="line">&ldquo;Cloaked keeps monitoring for new exposure.&rdquo;</p>
-<div class="file"><span>04_Ongoing_monitoring_graph.mp4</span><a class="dl" href="clips/04_Ongoing_monitoring_graph.mp4" download="04_Ongoing_monitoring_graph.mp4">Download</a></div>
+<div class="file"><span>04_Ongoing_monitoring_graph.mp4</span></div>
 </article>
 <article class="shot" id="shot-05a">
-<video src="clips/05a_New_masked_identity.mp4#t=4.5" preload="metadata" controls playsinline muted loop aria-label="Shot 05a"></video>
+<div class="player"><video data-src="clips/05a_New_masked_identity.mp4" muted loop playsinline preload="none" aria-label="Shot 05a"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/05a_New_masked_identity.mp4" data-name="05a_New_masked_identity.mp4" aria-label="Expand Shot 05a"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/05a_New_masked_identity.mp4" download="05a_New_masked_identity.mp4" aria-label="Download Shot 05a"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">05a</span><span class="len">6.5 s</span></div>
 <p class="line">&ldquo;You also get tools like masked email addresses and phone numbers&hellip;&rdquo;</p>
-<div class="file"><span>05a_New_masked_identity.mp4</span><a class="dl" href="clips/05a_New_masked_identity.mp4" download="05a_New_masked_identity.mp4">Download</a></div>
+<div class="file"><span>05a_New_masked_identity.mp4</span></div>
 </article>
 <article class="shot" id="shot-05b">
-<video src="clips/05b_Phone_number_masked.mp4#t=3.0" preload="metadata" controls playsinline muted loop aria-label="Shot 05b"></video>
+<div class="player"><video data-src="clips/05b_Phone_number_masked.mp4" muted loop playsinline preload="none" aria-label="Shot 05b"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/05b_Phone_number_masked.mp4" data-name="05b_Phone_number_masked.mp4" aria-label="Expand Shot 05b"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/05b_Phone_number_masked.mp4" download="05b_Phone_number_masked.mp4" aria-label="Download Shot 05b"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">05b</span><span class="len">3.3 s</span></div>
 <p class="line">&ldquo;&hellip;so you don&rsquo;t have to hand over your real contact information&hellip;&rdquo;</p>
-<div class="file"><span>05b_Phone_number_masked.mp4</span><a class="dl" href="clips/05b_Phone_number_masked.mp4" download="05b_Phone_number_masked.mp4">Download</a></div>
+<div class="file"><span>05b_Phone_number_masked.mp4</span></div>
 </article>
 <article class="shot" id="shot-06a">
-<video src="clips/06a_Site_stores_Cloaked_identity.mp4#t=1.5" preload="metadata" controls playsinline muted loop aria-label="Shot 06a"></video>
+<div class="player"><video data-src="clips/06a_Site_stores_Cloaked_identity.mp4" muted loop playsinline preload="none" aria-label="Shot 06a"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/06a_Site_stores_Cloaked_identity.mp4" data-name="06a_Site_stores_Cloaked_identity.mp4" aria-label="Expand Shot 06a"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/06a_Site_stores_Cloaked_identity.mp4" download="06a_Site_stores_Cloaked_identity.mp4" aria-label="Download Shot 06a"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">06a</span><span class="len">3.5 s</span></div>
 <p class="line">&ldquo;&hellip;every time you sign up for something online.&rdquo;</p>
-<div class="file"><span>06a_Site_stores_Cloaked_identity.mp4</span><a class="dl" href="clips/06a_Site_stores_Cloaked_identity.mp4" download="06a_Site_stores_Cloaked_identity.mp4">Download</a></div>
+<div class="file"><span>06a_Site_stores_Cloaked_identity.mp4</span></div>
 </article>
 <article class="shot" id="shot-06b">
-<video src="clips/06b_Signup_autofill.mp4#t=1.8" preload="metadata" controls playsinline muted loop aria-label="Shot 06b"></video>
+<div class="player"><video data-src="clips/06b_Signup_autofill.mp4" muted loop playsinline preload="none" aria-label="Shot 06b"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/06b_Signup_autofill.mp4" data-name="06b_Signup_autofill.mp4" aria-label="Expand Shot 06b"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/06b_Signup_autofill.mp4" download="06b_Signup_autofill.mp4" aria-label="Download Shot 06b"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">06b</span><span class="len">3.0 s</span></div>
 <p class="line">Same line as 06a. Use either one, or both back to back.</p>
-<div class="file"><span>06b_Signup_autofill.mp4</span><a class="dl" href="clips/06b_Signup_autofill.mp4" download="06b_Signup_autofill.mp4">Download</a></div>
+<div class="file"><span>06b_Signup_autofill.mp4</span></div>
 </article>
 <article class="shot" id="shot-07">
-<video src="clips/07_Call_Guard.mp4#t=4.2" preload="metadata" controls playsinline muted loop aria-label="Shot 07"></video>
+<div class="player"><video data-src="clips/07_Call_Guard.mp4" muted loop playsinline preload="none" aria-label="Shot 07"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/07_Call_Guard.mp4" data-name="07_Call_Guard.mp4" aria-label="Expand Shot 07"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/07_Call_Guard.mp4" download="07_Call_Guard.mp4" aria-label="Download Shot 07"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">07</span><span class="len">7.7 s</span></div>
 <p class="line">&ldquo;Plus, there&rsquo;s Call Guard to help screen unwanted calls and a VPN for more private browsing.&rdquo;</p>
-<div class="file"><span>07_Call_Guard.mp4</span><a class="dl" href="clips/07_Call_Guard.mp4" download="07_Call_Guard.mp4">Download</a></div>
+<div class="file"><span>07_Call_Guard.mp4</span></div>
 </article>
 <article class="shot" id="shot-08">
-<video src="clips/08_Messages_route_through_Cloaked.mp4#t=2.0" preload="metadata" controls playsinline muted loop aria-label="Shot 08"></video>
+<div class="player"><video data-src="clips/08_Messages_route_through_Cloaked.mp4" muted loop playsinline preload="none" aria-label="Shot 08"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/08_Messages_route_through_Cloaked.mp4" data-name="08_Messages_route_through_Cloaked.mp4" aria-label="Expand Shot 08"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/08_Messages_route_through_Cloaked.mp4" download="08_Messages_route_through_Cloaked.mp4" aria-label="Download Shot 08"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">08</span><span class="len">4.9 s</span></div>
 <p class="line">&ldquo;Because your personal information should belong to you, not every random company on the internet.&rdquo;</p>
-<div class="file"><span>08_Messages_route_through_Cloaked.mp4</span><a class="dl" href="clips/08_Messages_route_through_Cloaked.mp4" download="08_Messages_route_through_Cloaked.mp4">Download</a></div>
+<div class="file"><span>08_Messages_route_through_Cloaked.mp4</span></div>
 </article>
 <article class="shot" id="shot-09">
-<video src="clips/09_End_card.mp4#t=3.5" preload="metadata" controls playsinline muted loop aria-label="Shot 09"></video>
+<div class="player"><video data-src="clips/09_End_card.mp4" muted loop playsinline preload="none" aria-label="Shot 09"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/09_End_card.mp4" data-name="09_End_card.mp4" aria-label="Expand Shot 09"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/09_End_card.mp4" download="09_End_card.mp4" aria-label="Download Shot 09"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">09</span><span class="len">4.5 s</span></div>
 <p class="line">Call to action. Add the partner URL and offer as your own graphic.</p>
-<div class="file"><span>09_End_card.mp4</span><a class="dl" href="clips/09_End_card.mp4" download="09_End_card.mp4">Download</a></div>
+<div class="file"><span>09_End_card.mp4</span></div>
 </article>
 </div>
 </section>
@@ -184,11 +205,11 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 <section aria-labelledby="h-solref">
 <div class="sec-head"><h2 id="h-solref">Solution reference cut</h2><p>Every solution shot in script order, as one clip. Watch it first to see the story, then cut the single shots to your host&rsquo;s read.</p></div>
 <div class="ref">
-<video src="clips/Cloaked_Solution_BRoll_Reference.mp4#t=1.3" preload="metadata" controls playsinline muted aria-label="Full solution sequence"></video>
+<div class="player"><video data-src="clips/Cloaked_Solution_BRoll_Reference.mp4" muted loop playsinline preload="none" aria-label="Full solution sequence"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/Cloaked_Solution_BRoll_Reference.mp4" data-name="Cloaked_Solution_BRoll_Reference.mp4" aria-label="Expand Full solution sequence"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/Cloaked_Solution_BRoll_Reference.mp4" download="Cloaked_Solution_BRoll_Reference.mp4" aria-label="Download Full solution sequence"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="ref-info">
 <h3>Full solution sequence</h3>
 <p class="muted">47.1 s &middot; Shots 00 to 09</p>
-<div class="file"><span>Cloaked_Solution_BRoll_Reference.mp4</span><a class="dl" href="clips/Cloaked_Solution_BRoll_Reference.mp4" download="Cloaked_Solution_BRoll_Reference.mp4">Download</a></div>
+<div class="file"><span>Cloaked_Solution_BRoll_Reference.mp4</span></div>
 </div>
 </div>
 </section>
@@ -197,97 +218,97 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 <div class="sec-head"><h2 id="h-pro">Problem shots</h2><p>Core shots in script order, for the problem part of the read.</p></div>
 <div class="grid">
 <article class="shot" id="shot-p01">
-<video src="clips/P01_Personal_details_collected.mp4#t=1.3" preload="metadata" controls playsinline muted loop aria-label="Shot P01"></video>
+<div class="player"><video data-src="clips/P01_Personal_details_collected.mp4" muted loop playsinline preload="none" aria-label="Shot P01"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P01_Personal_details_collected.mp4" data-name="P01_Personal_details_collected.mp4" aria-label="Expand Shot P01"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P01_Personal_details_collected.mp4" download="P01_Personal_details_collected.mp4" aria-label="Download Shot P01"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P01</span><span class="len">1.5 s</span></div>
 <p class="line">&ldquo;Ever wonder how so many random companies seem to have your phone number, email address, or even your home address?&rdquo;</p>
-<div class="file"><span>P01_Personal_details_collected.mp4</span><a class="dl" href="clips/P01_Personal_details_collected.mp4" download="P01_Personal_details_collected.mp4">Download</a></div>
+<div class="file"><span>P01_Personal_details_collected.mp4</span></div>
 </article>
 <article class="shot" id="shot-p02">
-<video src="clips/P02_Data_broker_network.mp4#t=1.2" preload="metadata" controls playsinline muted loop aria-label="Shot P02"></video>
+<div class="player"><video data-src="clips/P02_Data_broker_network.mp4" muted loop playsinline preload="none" aria-label="Shot P02"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P02_Data_broker_network.mp4" data-name="P02_Data_broker_network.mp4" aria-label="Expand Shot P02"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P02_Data_broker_network.mp4" download="P02_Data_broker_network.mp4" aria-label="Download Shot P02"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P02</span><span class="len">1.8 s</span></div>
 <p class="line">&ldquo;There&rsquo;s an entire industry built around&hellip;&rdquo;</p>
-<div class="file"><span>P02_Data_broker_network.mp4</span><a class="dl" href="clips/P02_Data_broker_network.mp4" download="P02_Data_broker_network.mp4">Download</a></div>
+<div class="file"><span>P02_Data_broker_network.mp4</span></div>
 </article>
 <article class="shot" id="shot-p03">
-<video src="clips/P03_Marketing_lists.mp4#t=2.0" preload="metadata" controls playsinline muted loop aria-label="Shot P03"></video>
+<div class="player"><video data-src="clips/P03_Marketing_lists.mp4" muted loop playsinline preload="none" aria-label="Shot P03"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P03_Marketing_lists.mp4" data-name="P03_Marketing_lists.mp4" aria-label="Expand Shot P03"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P03_Marketing_lists.mp4" download="P03_Marketing_lists.mp4" aria-label="Download Shot P03"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P03</span><span class="len">3.7 s</span></div>
 <p class="line">&ldquo;&hellip;collecting and sharing people&rsquo;s personal information.&rdquo;</p>
-<div class="file"><span>P03_Marketing_lists.mp4</span><a class="dl" href="clips/P03_Marketing_lists.mp4" download="P03_Marketing_lists.mp4">Download</a></div>
+<div class="file"><span>P03_Marketing_lists.mp4</span></div>
 </article>
 <article class="shot" id="shot-p04">
-<video src="clips/P04_People_search_profile.mp4#t=2.5" preload="metadata" controls playsinline muted loop aria-label="Shot P04"></video>
+<div class="player"><video data-src="clips/P04_People_search_profile.mp4" muted loop playsinline preload="none" aria-label="Shot P04"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P04_People_search_profile.mp4" data-name="P04_People_search_profile.mp4" aria-label="Expand Shot P04"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P04_People_search_profile.mp4" download="P04_People_search_profile.mp4" aria-label="Download Shot P04"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P04</span><span class="len">3.1 s</span></div>
 <p class="line">&ldquo;Data brokers and people-search sites&hellip;&rdquo;</p>
-<div class="file"><span>P04_People_search_profile.mp4</span><a class="dl" href="clips/P04_People_search_profile.mp4" download="P04_People_search_profile.mp4">Download</a></div>
+<div class="file"><span>P04_People_search_profile.mp4</span></div>
 </article>
 <article class="shot" id="shot-p05">
-<video src="clips/P05_Bad_actor_scans_files.mp4#t=4.0" preload="metadata" controls playsinline muted loop aria-label="Shot P05"></video>
+<div class="player"><video data-src="clips/P05_Bad_actor_scans_files.mp4" muted loop playsinline preload="none" aria-label="Shot P05"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P05_Bad_actor_scans_files.mp4" data-name="P05_Bad_actor_scans_files.mp4" aria-label="Expand Shot P05"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P05_Bad_actor_scans_files.mp4" download="P05_Bad_actor_scans_files.mp4" aria-label="Download Shot P05"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P05</span><span class="len">8.0 s</span></div>
 <p class="line">&ldquo;&hellip;can make your information available to people you&rsquo;ve never met&hellip;&rdquo;</p>
-<div class="file"><span>P05_Bad_actor_scans_files.mp4</span><a class="dl" href="clips/P05_Bad_actor_scans_files.mp4" download="P05_Bad_actor_scans_files.mp4">Download</a></div>
+<div class="file"><span>P05_Bad_actor_scans_files.mp4</span></div>
 </article>
 <article class="shot" id="shot-p06a">
-<video src="clips/P06a_Broker_spreadsheet.mp4#t=4.0" preload="metadata" controls playsinline muted loop aria-label="Shot P06a"></video>
+<div class="player"><video data-src="clips/P06a_Broker_spreadsheet.mp4" muted loop playsinline preload="none" aria-label="Shot P06a"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P06a_Broker_spreadsheet.mp4" data-name="P06a_Broker_spreadsheet.mp4" aria-label="Expand Shot P06a"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P06a_Broker_spreadsheet.mp4" download="P06a_Broker_spreadsheet.mp4" aria-label="Download Shot P06a"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P06a</span><span class="len">6.5 s</span></div>
 <p class="line">&ldquo;&hellip;and companies you&rsquo;ve never heard of.&rdquo;</p>
-<div class="file"><span>P06a_Broker_spreadsheet.mp4</span><a class="dl" href="clips/P06a_Broker_spreadsheet.mp4" download="P06a_Broker_spreadsheet.mp4">Download</a></div>
+<div class="file"><span>P06a_Broker_spreadsheet.mp4</span></div>
 </article>
 <article class="shot" id="shot-p06b">
-<video src="clips/P06b_Broker_search_homeowners.mp4#t=4.8" preload="metadata" controls playsinline muted loop aria-label="Shot P06b"></video>
+<div class="player"><video data-src="clips/P06b_Broker_search_homeowners.mp4" muted loop playsinline preload="none" aria-label="Shot P06b"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P06b_Broker_search_homeowners.mp4" data-name="P06b_Broker_search_homeowners.mp4" aria-label="Expand Shot P06b"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P06b_Broker_search_homeowners.mp4" download="P06b_Broker_search_homeowners.mp4" aria-label="Download Shot P06b"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P06b</span><span class="len">5.4 s</span></div>
 <p class="line">Same line as P06a. Use either one, or both back to back.</p>
-<div class="file"><span>P06b_Broker_search_homeowners.mp4</span><a class="dl" href="clips/P06b_Broker_search_homeowners.mp4" download="P06b_Broker_search_homeowners.mp4">Download</a></div>
+<div class="file"><span>P06b_Broker_search_homeowners.mp4</span></div>
 </article>
 <article class="shot" id="shot-p07">
-<video src="clips/P07_Signup_accept_terms.mp4#t=6.0" preload="metadata" controls playsinline muted loop aria-label="Shot P07"></video>
+<div class="player"><video data-src="clips/P07_Signup_accept_terms.mp4" muted loop playsinline preload="none" aria-label="Shot P07"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P07_Signup_accept_terms.mp4" data-name="P07_Signup_accept_terms.mp4" aria-label="Expand Shot P07"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P07_Signup_accept_terms.mp4" download="P07_Signup_accept_terms.mp4" aria-label="Download Shot P07"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P07</span><span class="len">6.3 s</span></div>
 <p class="line">&ldquo;And most of us never agreed to any of this in the first place.&rdquo;</p>
-<div class="file"><span>P07_Signup_accept_terms.mp4</span><a class="dl" href="clips/P07_Signup_accept_terms.mp4" download="P07_Signup_accept_terms.mp4">Download</a></div>
+<div class="file"><span>P07_Signup_accept_terms.mp4</span></div>
 </article>
 </div>
 <div class="sub"><h3>Optional spam and safety shots</h3><p>Use these when the host goes off script or talks about spam, robocalls or tracking.</p></div>
 <div class="grid">
 <article class="shot" id="shot-p08">
-<video src="clips/P08_Spam_calls_wall.mp4#t=4.0" preload="metadata" controls playsinline muted loop aria-label="Shot P08"></video>
+<div class="player"><video data-src="clips/P08_Spam_calls_wall.mp4" muted loop playsinline preload="none" aria-label="Shot P08"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P08_Spam_calls_wall.mp4" data-name="P08_Spam_calls_wall.mp4" aria-label="Expand Shot P08"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P08_Spam_calls_wall.mp4" download="P08_Spam_calls_wall.mp4" aria-label="Download Shot P08"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P08</span><span class="len">8.2 s</span></div>
 <p class="line">Use when the host talks about spam calls.</p>
-<div class="file"><span>P08_Spam_calls_wall.mp4</span><a class="dl" href="clips/P08_Spam_calls_wall.mp4" download="P08_Spam_calls_wall.mp4">Download</a></div>
+<div class="file"><span>P08_Spam_calls_wall.mp4</span></div>
 </article>
 <article class="shot" id="shot-p09">
-<video src="clips/P09_Auto_dialer.mp4#t=2.0" preload="metadata" controls playsinline muted loop aria-label="Shot P09"></video>
+<div class="player"><video data-src="clips/P09_Auto_dialer.mp4" muted loop playsinline preload="none" aria-label="Shot P09"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P09_Auto_dialer.mp4" data-name="P09_Auto_dialer.mp4" aria-label="Expand Shot P09"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P09_Auto_dialer.mp4" download="P09_Auto_dialer.mp4" aria-label="Download Shot P09"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P09</span><span class="len">4.3 s</span></div>
 <p class="line">Use when the host talks about robocalls.</p>
-<div class="file"><span>P09_Auto_dialer.mp4</span><a class="dl" href="clips/P09_Auto_dialer.mp4" download="P09_Auto_dialer.mp4">Download</a></div>
+<div class="file"><span>P09_Auto_dialer.mp4</span></div>
 </article>
 <article class="shot" id="shot-p10">
-<video src="clips/P10_Unknown_caller_recents.mp4#t=0.8" preload="metadata" controls playsinline muted loop aria-label="Shot P10"></video>
+<div class="player"><video data-src="clips/P10_Unknown_caller_recents.mp4" muted loop playsinline preload="none" aria-label="Shot P10"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P10_Unknown_caller_recents.mp4" data-name="P10_Unknown_caller_recents.mp4" aria-label="Expand Shot P10"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P10_Unknown_caller_recents.mp4" download="P10_Unknown_caller_recents.mp4" aria-label="Download Shot P10"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P10</span><span class="len">3.0 s</span></div>
 <p class="line">Use when the host talks about unknown callers.</p>
-<div class="file"><span>P10_Unknown_caller_recents.mp4</span><a class="dl" href="clips/P10_Unknown_caller_recents.mp4" download="P10_Unknown_caller_recents.mp4">Download</a></div>
+<div class="file"><span>P10_Unknown_caller_recents.mp4</span></div>
 </article>
 <article class="shot" id="shot-p11">
-<video src="clips/P11_Spam_notifications.mp4#t=1.5" preload="metadata" controls playsinline muted loop aria-label="Shot P11"></video>
+<div class="player"><video data-src="clips/P11_Spam_notifications.mp4" muted loop playsinline preload="none" aria-label="Shot P11"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P11_Spam_notifications.mp4" data-name="P11_Spam_notifications.mp4" aria-label="Expand Shot P11"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P11_Spam_notifications.mp4" download="P11_Spam_notifications.mp4" aria-label="Download Shot P11"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P11</span><span class="len">1.9 s</span></div>
 <p class="line">Use when the host talks about spam texts and emails.</p>
-<div class="file"><span>P11_Spam_notifications.mp4</span><a class="dl" href="clips/P11_Spam_notifications.mp4" download="P11_Spam_notifications.mp4">Download</a></div>
+<div class="file"><span>P11_Spam_notifications.mp4</span></div>
 </article>
 <article class="shot" id="shot-p12">
-<video src="clips/P12_Tracking_across_sites.mp4#t=4.5" preload="metadata" controls playsinline muted loop aria-label="Shot P12"></video>
+<div class="player"><video data-src="clips/P12_Tracking_across_sites.mp4" muted loop playsinline preload="none" aria-label="Shot P12"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P12_Tracking_across_sites.mp4" data-name="P12_Tracking_across_sites.mp4" aria-label="Expand Shot P12"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P12_Tracking_across_sites.mp4" download="P12_Tracking_across_sites.mp4" aria-label="Download Shot P12"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P12</span><span class="len">6.6 s</span></div>
 <p class="line">Use when the host talks about being tracked online.</p>
-<div class="file"><span>P12_Tracking_across_sites.mp4</span><a class="dl" href="clips/P12_Tracking_across_sites.mp4" download="P12_Tracking_across_sites.mp4">Download</a></div>
+<div class="file"><span>P12_Tracking_across_sites.mp4</span></div>
 </article>
 <article class="shot" id="shot-p13">
-<video src="clips/P13_Data_to_bad_actor.mp4#t=2.2" preload="metadata" controls playsinline muted loop aria-label="Shot P13"></video>
+<div class="player"><video data-src="clips/P13_Data_to_bad_actor.mp4" muted loop playsinline preload="none" aria-label="Shot P13"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P13_Data_to_bad_actor.mp4" data-name="P13_Data_to_bad_actor.mp4" aria-label="Expand Shot P13"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P13_Data_to_bad_actor.mp4" download="P13_Data_to_bad_actor.mp4" aria-label="Download Shot P13"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P13</span><span class="len">2.4 s</span></div>
 <p class="line">Use when the host talks about data reaching scammers.</p>
-<div class="file"><span>P13_Data_to_bad_actor.mp4</span><a class="dl" href="clips/P13_Data_to_bad_actor.mp4" download="P13_Data_to_bad_actor.mp4">Download</a></div>
+<div class="file"><span>P13_Data_to_bad_actor.mp4</span></div>
 </article>
 <article class="shot" id="shot-p14">
-<video src="clips/P14_Signup_data_shared.mp4#t=1.8" preload="metadata" controls playsinline muted loop aria-label="Shot P14"></video>
+<div class="player"><video data-src="clips/P14_Signup_data_shared.mp4" muted loop playsinline preload="none" aria-label="Shot P14"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/P14_Signup_data_shared.mp4" data-name="P14_Signup_data_shared.mp4" aria-label="Expand Shot P14"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/P14_Signup_data_shared.mp4" download="P14_Signup_data_shared.mp4" aria-label="Download Shot P14"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="meta"><span class="sid">P14</span><span class="len">2.1 s</span></div>
 <p class="line">Use with &ldquo;every time you sign up for something online.&rdquo;</p>
-<div class="file"><span>P14_Signup_data_shared.mp4</span><a class="dl" href="clips/P14_Signup_data_shared.mp4" download="P14_Signup_data_shared.mp4">Download</a></div>
+<div class="file"><span>P14_Signup_data_shared.mp4</span></div>
 </article>
 </div>
 </section>
@@ -295,11 +316,11 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 <section aria-labelledby="h-proref">
 <div class="sec-head"><h2 id="h-proref">Problem reference cut</h2><p>The core problem shots in script order, as one clip.</p></div>
 <div class="ref">
-<video src="clips/Cloaked_Problem_BRoll_Reference.mp4#t=0.8" preload="metadata" controls playsinline muted aria-label="Full problem sequence"></video>
+<div class="player"><video data-src="clips/Cloaked_Problem_BRoll_Reference.mp4" muted loop playsinline preload="none" aria-label="Full problem sequence"></video><div class="ctrls"><button type="button" class="ctrl expand" data-src="clips/Cloaked_Problem_BRoll_Reference.mp4" data-name="Cloaked_Problem_BRoll_Reference.mp4" aria-label="Expand Full problem sequence"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M12 3h5v5M8 17H3v-5M17 3l-6 6M3 17l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button><a class="ctrl" href="clips/Cloaked_Problem_BRoll_Reference.mp4" download="Cloaked_Problem_BRoll_Reference.mp4" aria-label="Download Full problem sequence"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div></div>
 <div class="ref-info">
 <h3>Full problem sequence</h3>
 <p class="muted">29.7 s &middot; Core shots P01 to P07, with P05 and P06a trimmed to 4 seconds</p>
-<div class="file"><span>Cloaked_Problem_BRoll_Reference.mp4</span><a class="dl" href="clips/Cloaked_Problem_BRoll_Reference.mp4" download="Cloaked_Problem_BRoll_Reference.mp4">Download</a></div>
+<div class="file"><span>Cloaked_Problem_BRoll_Reference.mp4</span></div>
 </div>
 </div>
 </section>
@@ -325,5 +346,51 @@ video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px;
 </dl>
 </section>
 </div>
+<dialog class="lightbox" aria-label="Clip preview">
+<div class="lb-bar">
+<a class="lb-btn dl-lb" href="#" download><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10M5.5 8.5L10 13l4.5-4.5M4 16.5h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Download</span></a>
+<button type="button" class="lb-btn close" aria-label="Close" autofocus><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+</div>
+<video muted loop playsinline></video>
+</dialog>
+<script>
+(function () {
+  var vids = document.querySelectorAll(".player video");
+  function load(v) { if (!v.getAttribute("src")) { v.src = v.dataset.src; } }
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) { load(v); var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        else { v.pause(); }
+      });
+    }, { rootMargin: "200px 0px" });
+    vids.forEach(function (v) { io.observe(v); });
+  } else {
+    vids.forEach(function (v) { load(v); v.autoplay = true; v.play(); });
+  }
+
+  var box = document.querySelector(".lightbox");
+  var lbv = box.querySelector("video");
+  var lbdl = box.querySelector(".dl-lb");
+  var opener = null;
+  function open(src, name, from) {
+    opener = from;
+    lbv.src = src; lbdl.href = src; lbdl.setAttribute("download", name);
+    if (box.showModal) box.showModal(); else box.setAttribute("open", "");
+    var p = lbv.play(); if (p && p.catch) p.catch(function () {});
+  }
+  function close() { if (box.open) box.close(); }
+  box.addEventListener("close", function () { lbv.pause(); lbv.removeAttribute("src"); lbv.load(); if (opener) opener.focus(); });
+  box.querySelector(".close").addEventListener("click", close);
+  box.addEventListener("click", function (e) { if (e.target === box) close(); });
+  document.querySelectorAll(".expand").forEach(function (b) {
+    b.addEventListener("click", function () { open(b.dataset.src, b.dataset.name, b); });
+  });
+  vids.forEach(function (v) {
+    v.addEventListener("click", function () { var b = v.parentNode.querySelector(".expand"); open(b.dataset.src, b.dataset.name, b); });
+  });
+})();
+</script>
 </body>
 </html>
