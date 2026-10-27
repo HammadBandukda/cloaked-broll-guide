@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Cloaked B-roll Guide</title>
+<style>
+/* Layout: one 1200px editorial column on cream; shot boards as even grids of 16:9 clips with the script line under each. */
+:root {
+  --bg: #FBF8EF; --surface: #F3EFE2; --line: #E9E6DA; --muted: #454030; --fg: #130F02;
+  --accent: #FF550C; --accent-ink: #CC3D00; --flap: #130F02; --cloak: #FF550C;
+  --pos: #009933; --neg: #EC4545; --video-bg: #E9E6DA;
+  --display: "Simula", Georgia, "Times New Roman", serif;
+  --body: "STK Bureau Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #130F02; --surface: #1C180B; --line: #292519; --muted: #A09C8F; --fg: #FBF8EF;
+  --accent: #FF6625; --accent-ink: #FF8A57; --flap: #D0470C; --cloak: #FF6625;
+  --pos: #3DBE6B; --neg: #F06A6A; --video-bg: #201C0F; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #130F02; --surface: #1C180B; --line: #292519; --muted: #A09C8F; --fg: #FBF8EF;
+  --accent: #FF6625; --accent-ink: #FF8A57; --flap: #D0470C; --cloak: #FF6625;
+  --pos: #3DBE6B; --neg: #F06A6A; --video-bg: #201C0F; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 17px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 56px 96px; }
+.wrap { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 96px; }
+h1, h2 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(48px, 8vw, 88px); line-height: 1.05; letter-spacing: -0.02em; }
+h2 { font-size: clamp(32px, 4.4vw, 44px); line-height: 1.1; }
+h3 { font-size: 19px; font-weight: 500; margin: 0; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.eyebrow { font-size: 12px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+header { display: flex; flex-direction: column; gap: 28px; }
+.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.logo { width: 148px; height: auto; }
+.logo .flap { fill: var(--flap); } .logo .cloak { fill: var(--cloak); } .logo .word { fill: var(--fg); }
+.lead { font-size: 20px; line-height: 1.45; max-width: 44ch; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chips span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 15px; font-variant-numeric: tabular-nums; }
+section { display: flex; flex-direction: column; gap: 36px; }
+.sec-head { display: flex; flex-direction: column; gap: 10px; }
+.sec-head p { font-size: 19px; max-width: 60ch; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+.rule { background: var(--surface); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 48px 24px; }
+.shot { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+video { width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; background: var(--video-bg); display: block; object-fit: cover; }
+.meta { display: flex; justify-content: space-between; font-variant-numeric: tabular-nums; }
+.sid { color: var(--accent-ink); font-weight: 500; }
+.len { color: var(--muted); }
+.line { font-size: 18px; line-height: 1.45; }
+.file { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; color: var(--muted); font-size: 14px; overflow-wrap: anywhere; }
+.dl { text-decoration: none; display: inline-block; font: inherit; font-size: 14px; font-weight: 500; color: var(--fg); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; cursor: pointer; }
+.dl:hover { border-color: var(--accent); color: var(--accent-ink); }
+.dl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dl[disabled] { opacity: 0.6; cursor: default; }
+.sub { display: flex; flex-direction: column; gap: 6px; padding-top: 16px; }
+.sub p { font-size: 19px; }
+.ref { background: var(--surface); border-radius: 16px; padding: 28px; display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.ref-info { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ref video { border: 1px solid var(--line); }
+.verdicts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.verdict { background: var(--surface); border-radius: 16px; padding: 32px; display: flex; flex-direction: column; gap: 16px; }
+.verdict h3 { display: flex; align-items: center; gap: 10px; }
+.badge { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; }
+.badge svg { width: 14px; height: 14px; }
+.do .badge { background: var(--pos); } .dont .badge { background: var(--neg); }
+.verdict ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 18px; }
+.specs { display: grid; grid-template-columns: max-content 1fr; border-top: 1px solid var(--line); }
+.specs dt, .specs dd { margin: 0; padding: 16px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.specs dt { font-weight: 500; padding-right: 32px; }
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--fg); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: 15px; }
+@media (max-width: 720px) {
+  .ref { grid-template-columns: 1fr; padding: 20px; }
+  .specs { grid-template-columns: 1fr; } .specs dt { padding-bottom: 0; border-bottom: 0; }
+  .wrap { gap: 72px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="top"><span class="eyebrow">Host-read ads &middot; B-roll guide</span><svg class="logo" viewBox="0 0 185 32" role="img" aria-label="Cloaked" xmlns="http://www.w3.org/2000/svg">
+<path class="flap" d="M10.1364 32C10.1364 32 -2.35138 27.6388 0.394515 23.0356C2.14421 20.1281 6.1403 23.2775 12.3828 26.4268L10.1336 32H10.1364Z"/>
+<path class="cloak" d="M25.3731 30.5449C34.8638 31.2704 39.0687 27.1805 40.0678 25.9713C40.0678 25.9713 34.401 19.0948 31.0625 14.481C28.7878 11.3397 25.8754 6.87361 24.2076 4.2805C23.6149 3.3588 22.1983 3.39643 21.5943 4.31275C15.397 13.6856 3.98445 20.7125 1.4248 22.0668C3.44825 21.2661 7.13955 23.7625 12.1375 26.4281C12.1375 26.4281 15.8485 28.2661 18.363 29.118C21.5859 30.209 25.3759 30.5475 25.3759 30.5475L25.3731 30.5449Z"/>
+<g class="word">
+<path d="M152.747 27.7464C148.616 27.7464 145.658 24.7207 145.362 20.2849H159.562L160.652 18.8495C160.477 13.5947 157 10.1609 151.906 10.1609C146.005 10.1609 141.826 14.6108 141.826 20.8113C141.826 27.0118 145.76 30.9719 151.802 30.9719C156.052 30.9719 159.038 28.9397 160.971 24.6672L159.179 23.7215C157.703 26.4179 155.527 27.7492 152.75 27.7492L152.747 27.7464ZM151.139 12.6464C154.156 12.6464 156.052 14.6108 156.486 17.9348H145.455C145.957 14.667 148.072 12.6464 151.114 12.6464L151.139 12.6464Z"/>
+<path d="M72.0682 26.1671L72.0654 0L65.919 1.6803V3.15232C67.8521 3.04818 68.6225 3.81656 68.6225 5.81491V26.1671C68.6225 28.0247 67.7787 28.8634 65.919 28.8634V30.5437H74.7717V28.8634C72.9092 28.8634 72.0682 28.0219 72.0682 26.1671Z"/>
+<path d="M130.447 18.7535L135.324 14.5035C137.22 12.857 138.626 12.2603 140.559 12.2603V10.58H130.479V12.2603C133.007 12.2603 133.323 13.3101 131.602 14.8187L126.683 19.1306V0L120.536 1.6803V3.15232C122.47 3.04818 123.24 3.81656 123.24 5.81491V26.1671C123.24 27.9881 122.537 28.9 121.098 28.9V30.5465H129.386V28.8662C127.524 28.8662 126.683 28.0247 126.683 26.1699V19.9047L135.536 28.9366C136.766 30.1975 137.748 30.5494 139.997 30.5494H142.949V28.9028C141.298 28.7987 140.35 28.3062 138.804 26.8369L130.45 18.7563L130.447 18.7535Z"/>
+<path d="M57.0314 27.6055C52.7475 27.6055 49.6546 24.2787 49.6546 19.6543C49.6546 15.4494 52.2198 12.7192 56.1538 12.7192C59.385 12.7192 61.5636 14.6472 62.2296 18.0444H63.8805V11.9846C61.9136 10.8644 59.1734 10.1636 56.6787 10.1636C50.4617 10.1636 46 14.6838 46 20.9181C46 26.7696 50.2161 30.9717 56.0804 30.9717C60.3304 30.9717 63.175 28.9396 65.1081 24.4898L63.2117 23.5075C61.7019 26.2742 59.7349 27.6055 57.0286 27.6055H57.0314Z"/>
+<path d="M86.1128 10.1609C80.2824 10.1609 75.9618 14.6445 75.9618 20.7043C75.9618 26.7641 80.1413 30.969 85.9378 30.969C91.7343 30.969 96.0887 26.4854 96.0887 20.4257C96.0887 14.3659 91.9093 10.1609 86.1128 10.1609ZM85.9745 28.4472C82.1816 28.4472 79.8986 25.4356 79.8986 20.4594C79.8986 15.4833 82.2522 12.6828 86.0817 12.6828C89.9112 12.6828 92.1576 15.6944 92.1576 20.6705C92.1576 25.6467 89.804 28.4472 85.9745 28.4472Z"/>
+<path d="M117.551 26.1336V10.5803H115.9L114.373 12.6687C113.117 11.0728 111.026 10.1609 108.419 10.1609C102.659 10.1609 98.4794 14.7853 98.4794 21.1603C98.4794 27.0118 101.956 30.969 107.121 30.969C110.106 30.969 112.53 29.5674 114.111 26.9414V30.5497H119.696V28.9C118.256 28.9 117.551 28.025 117.551 26.1336ZM114.108 21.6162C114.108 25.5735 111.859 28.1685 108.419 28.1685C104.589 28.1685 102.272 25.2949 102.272 20.4622C102.272 15.6296 104.66 12.5814 108.489 12.5814C111.825 12.5814 114.108 14.9288 114.108 18.3964L114.111 20L114.108 21.6162Z"/>
+<path d="M182.04 26.1333V0L175.893 1.6803V3.15232C177.827 3.04818 178.597 3.81656 178.597 5.81491V12.3532C177.319 10.9515 175.326 10.1578 172.871 10.1578C167.004 10.1578 162.72 14.7484 162.72 21.1571C162.72 27.0086 166.304 30.9659 171.536 30.9659C174.587 30.9659 177.059 29.5333 178.597 26.9158V30.5465H184.743V28.7959C182.847 28.7959 182.04 28.0247 182.04 26.1333ZM172.837 28.1654C168.903 28.1654 166.516 25.2214 166.516 20.4591C166.516 15.6969 169.01 12.5783 172.908 12.5783C176.314 12.5783 178.597 14.9257 178.597 18.3932V21.6159C178.597 25.5394 176.314 28.1682 172.837 28.1682V28.1654Z"/>
+</g></svg></div>
+<h1>B-roll guide</h1>
+<p class="lead">Silent clips to play while the host reads the Cloaked ad. Each clip matches one line of the script.</p>
+<div class="chips"><span>16:9</span><span>1920 &times; 1080</span><span>30 fps</span><span>No audio</span><span>No on-screen text</span></div>
+</header>
+
+<section aria-labelledby="h-use">
+<div class="sec-head"><h2 id="h-use">How to use it</h2></div>
+<div class="rules">
+<div class="rule"><h3>Match the clip to the line</h3><p>Play each clip while the host says the line on its card.</p></div><div class="rule"><h3>Bring your own sound</h3><p>Clips have no audio. The host&rsquo;s voice carries the read.</p></div><div class="rule"><h3>Trim, reorder, add graphics</h3><p>Cut clips to fit your pacing and lay your lower thirds on top.</p></div><div class="rule"><h3>End on the end card</h3><p>Close on the Cloaked end card. Add the partner URL and offer as your own graphic.</p></div>
+</div>
+</section>
+
+<section aria-labelledby="h-sol">
+<div class="sec-head"><h2 id="h-sol">Solution shots</h2><p>In script order. If the host paraphrases, match the clip to the topic.</p></div>
+<div class="grid">
+<article class="shot" id="shot-00">
+<video src="clips/00_Intro_sponsor_logo.mp4#t=1.3" preload="metadata" controls playsinline muted loop aria-label="Shot 00"></video>
+<div class="meta"><span class="sid">00</span><span class="len">5.0 s</span></div>
+<p class="line">Whenever the host introduces today&rsquo;s sponsor, Cloaked.</p>
+<div class="file"><span>00_Intro_sponsor_logo.mp4</span><a class="dl" href="clips/00_Intro_sponsor_logo.mp4" download="00_Intro_sponsor_logo.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-02">
+<video src="clips/02_Privacy_platform_orbit.mp4#t=0.8" preload="metadata" controls playsinline muted loop aria-label="Shot 02"></video>
+<div class="meta"><span class="sid">02</span><span class="len">3.0 s</span></div>
+<p class="line">&ldquo;Cloaked is a personal privacy platform that helps you take back control of your information.&rdquo;</p>
+<div class="file"><span>02_Privacy_platform_orbit.mp4</span><a class="dl" href="clips/02_Privacy_platform_orbit.mp4" download="02_Privacy_platform_orbit.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-03">
+<video src="clips/03_Data_removal_260_removed.mp4#t=2.6" preload="metadata" controls playsinline muted loop aria-label="Shot 03"></video>
+<div class="meta"><span class="sid">03</span><span class="len">3.1 s</span></div>
+<p class="line">&ldquo;It finds your personal information across more than 1,000 data brokers and other sites and helps get it removed.&rdquo;</p>
+<div class="file"><span>03_Data_removal_260_removed.mp4</span><a class="dl" href="clips/03_Data_removal_260_removed.mp4" download="03_Data_removal_260_removed.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-04">
+<video src="clips/04_Ongoing_monitoring_graph.mp4#t=2.2" preload="metadata" controls playsinline muted loop aria-label="Shot 04"></video>
+<div class="meta"><span class="sid">04</span><span class="len">2.7 s</span></div>
+<p class="line">&ldquo;Cloaked keeps monitoring for new exposure.&rdquo;</p>
+<div class="file"><span>04_Ongoing_monitoring_graph.mp4</span><a class="dl" href="clips/04_Ongoing_monitoring_graph.mp4" download="04_Ongoing_monitoring_graph.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-05a">
+<video src="clips/05a_New_masked_identity.mp4#t=4.5" preload="metadata" controls playsinline muted loop aria-label="Shot 05a"></video>
+<div class="meta"><span class="sid">05a</span><span class="len">6.5 s</span></div>
+<p class="line">&ldquo;You also get tools like masked email addresses and phone numbers&hellip;&rdquo;</p>
+<div class="file"><span>05a_New_masked_identity.mp4</span><a class="dl" href="clips/05a_New_masked_identity.mp4" download="05a_New_masked_identity.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-05b">
+<video src="clips/05b_Phone_number_masked.mp4#t=3.0" preload="metadata" controls playsinline muted loop aria-label="Shot 05b"></video>
+<div class="meta"><span class="sid">05b</span><span class="len">3.3 s</span></div>
+<p class="line">&ldquo;&hellip;so you don&rsquo;t have to hand over your real contact information&hellip;&rdquo;</p>
+<div class="file"><span>05b_Phone_number_masked.mp4</span><a class="dl" href="clips/05b_Phone_number_masked.mp4" download="05b_Phone_number_masked.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-06a">
+<video src="clips/06a_Site_stores_Cloaked_identity.mp4#t=1.5" preload="metadata" controls playsinline muted loop aria-label="Shot 06a"></video>
+<div class="meta"><span class="sid">06a</span><span class="len">3.5 s</span></div>
+<p class="line">&ldquo;&hellip;every time you sign up for something online.&rdquo;</p>
+<div class="file"><span>06a_Site_stores_Cloaked_identity.mp4</span><a class="dl" href="clips/06a_Site_stores_Cloaked_identity.mp4" download="06a_Site_stores_Cloaked_identity.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-06b">
+<video src="clips/06b_Signup_autofill.mp4#t=1.8" preload="metadata" controls playsinline muted loop aria-label="Shot 06b"></video>
+<div class="meta"><span class="sid">06b</span><span class="len">3.0 s</span></div>
+<p class="line">Same line as 06a. Use either one, or both back to back.</p>
+<div class="file"><span>06b_Signup_autofill.mp4</span><a class="dl" href="clips/06b_Signup_autofill.mp4" download="06b_Signup_autofill.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-07">
+<video src="clips/07_Call_Guard.mp4#t=4.2" preload="metadata" controls playsinline muted loop aria-label="Shot 07"></video>
+<div class="meta"><span class="sid">07</span><span class="len">7.7 s</span></div>
+<p class="line">&ldquo;Plus, there&rsquo;s Call Guard to help screen unwanted calls and a VPN for more private browsing.&rdquo;</p>
+<div class="file"><span>07_Call_Guard.mp4</span><a class="dl" href="clips/07_Call_Guard.mp4" download="07_Call_Guard.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-08">
+<video src="clips/08_Messages_route_through_Cloaked.mp4#t=2.0" preload="metadata" controls playsinline muted loop aria-label="Shot 08"></video>
+<div class="meta"><span class="sid">08</span><span class="len">4.9 s</span></div>
+<p class="line">&ldquo;Because your personal information should belong to you, not every random company on the internet.&rdquo;</p>
+<div class="file"><span>08_Messages_route_through_Cloaked.mp4</span><a class="dl" href="clips/08_Messages_route_through_Cloaked.mp4" download="08_Messages_route_through_Cloaked.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-09">
+<video src="clips/09_End_card.mp4#t=3.5" preload="metadata" controls playsinline muted loop aria-label="Shot 09"></video>
+<div class="meta"><span class="sid">09</span><span class="len">4.5 s</span></div>
+<p class="line">Call to action. Add the partner URL and offer as your own graphic.</p>
+<div class="file"><span>09_End_card.mp4</span><a class="dl" href="clips/09_End_card.mp4" download="09_End_card.mp4">Download</a></div>
+</article>
+</div>
+</section>
+
+<section aria-labelledby="h-solref">
+<div class="sec-head"><h2 id="h-solref">Solution reference cut</h2><p>Every solution shot in script order, as one clip. Watch it first to see the story, then cut the single shots to your host&rsquo;s read.</p></div>
+<div class="ref">
+<video src="clips/Cloaked_Solution_BRoll_Reference.mp4#t=1.3" preload="metadata" controls playsinline muted aria-label="Full solution sequence"></video>
+<div class="ref-info">
+<h3>Full solution sequence</h3>
+<p class="muted">47.1 s &middot; Shots 00 to 09</p>
+<div class="file"><span>Cloaked_Solution_BRoll_Reference.mp4</span><a class="dl" href="clips/Cloaked_Solution_BRoll_Reference.mp4" download="Cloaked_Solution_BRoll_Reference.mp4">Download</a></div>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-pro">
+<div class="sec-head"><h2 id="h-pro">Problem shots</h2><p>Core shots in script order, for the problem part of the read.</p></div>
+<div class="grid">
+<article class="shot" id="shot-p01">
+<video src="clips/P01_Personal_details_collected.mp4#t=1.3" preload="metadata" controls playsinline muted loop aria-label="Shot P01"></video>
+<div class="meta"><span class="sid">P01</span><span class="len">1.5 s</span></div>
+<p class="line">&ldquo;Ever wonder how so many random companies seem to have your phone number, email address, or even your home address?&rdquo;</p>
+<div class="file"><span>P01_Personal_details_collected.mp4</span><a class="dl" href="clips/P01_Personal_details_collected.mp4" download="P01_Personal_details_collected.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p02">
+<video src="clips/P02_Data_broker_network.mp4#t=1.2" preload="metadata" controls playsinline muted loop aria-label="Shot P02"></video>
+<div class="meta"><span class="sid">P02</span><span class="len">1.8 s</span></div>
+<p class="line">&ldquo;There&rsquo;s an entire industry built around&hellip;&rdquo;</p>
+<div class="file"><span>P02_Data_broker_network.mp4</span><a class="dl" href="clips/P02_Data_broker_network.mp4" download="P02_Data_broker_network.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p03">
+<video src="clips/P03_Marketing_lists.mp4#t=2.0" preload="metadata" controls playsinline muted loop aria-label="Shot P03"></video>
+<div class="meta"><span class="sid">P03</span><span class="len">3.7 s</span></div>
+<p class="line">&ldquo;&hellip;collecting and sharing people&rsquo;s personal information.&rdquo;</p>
+<div class="file"><span>P03_Marketing_lists.mp4</span><a class="dl" href="clips/P03_Marketing_lists.mp4" download="P03_Marketing_lists.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p04">
+<video src="clips/P04_People_search_profile.mp4#t=2.5" preload="metadata" controls playsinline muted loop aria-label="Shot P04"></video>
+<div class="meta"><span class="sid">P04</span><span class="len">3.1 s</span></div>
+<p class="line">&ldquo;Data brokers and people-search sites&hellip;&rdquo;</p>
+<div class="file"><span>P04_People_search_profile.mp4</span><a class="dl" href="clips/P04_People_search_profile.mp4" download="P04_People_search_profile.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p05">
+<video src="clips/P05_Bad_actor_scans_files.mp4#t=4.0" preload="metadata" controls playsinline muted loop aria-label="Shot P05"></video>
+<div class="meta"><span class="sid">P05</span><span class="len">8.0 s</span></div>
+<p class="line">&ldquo;&hellip;can make your information available to people you&rsquo;ve never met&hellip;&rdquo;</p>
+<div class="file"><span>P05_Bad_actor_scans_files.mp4</span><a class="dl" href="clips/P05_Bad_actor_scans_files.mp4" download="P05_Bad_actor_scans_files.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p06a">
+<video src="clips/P06a_Broker_spreadsheet.mp4#t=4.0" preload="metadata" controls playsinline muted loop aria-label="Shot P06a"></video>
+<div class="meta"><span class="sid">P06a</span><span class="len">6.5 s</span></div>
+<p class="line">&ldquo;&hellip;and companies you&rsquo;ve never heard of.&rdquo;</p>
+<div class="file"><span>P06a_Broker_spreadsheet.mp4</span><a class="dl" href="clips/P06a_Broker_spreadsheet.mp4" download="P06a_Broker_spreadsheet.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p06b">
+<video src="clips/P06b_Broker_search_homeowners.mp4#t=4.8" preload="metadata" controls playsinline muted loop aria-label="Shot P06b"></video>
+<div class="meta"><span class="sid">P06b</span><span class="len">5.4 s</span></div>
+<p class="line">Same line as P06a. Use either one, or both back to back.</p>
+<div class="file"><span>P06b_Broker_search_homeowners.mp4</span><a class="dl" href="clips/P06b_Broker_search_homeowners.mp4" download="P06b_Broker_search_homeowners.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p07">
+<video src="clips/P07_Signup_accept_terms.mp4#t=6.0" preload="metadata" controls playsinline muted loop aria-label="Shot P07"></video>
+<div class="meta"><span class="sid">P07</span><span class="len">6.3 s</span></div>
+<p class="line">&ldquo;And most of us never agreed to any of this in the first place.&rdquo;</p>
+<div class="file"><span>P07_Signup_accept_terms.mp4</span><a class="dl" href="clips/P07_Signup_accept_terms.mp4" download="P07_Signup_accept_terms.mp4">Download</a></div>
+</article>
+</div>
+<div class="sub"><h3>Optional spam and safety shots</h3><p>Use these when the host goes off script or talks about spam, robocalls or tracking.</p></div>
+<div class="grid">
+<article class="shot" id="shot-p08">
+<video src="clips/P08_Spam_calls_wall.mp4#t=4.0" preload="metadata" controls playsinline muted loop aria-label="Shot P08"></video>
+<div class="meta"><span class="sid">P08</span><span class="len">8.2 s</span></div>
+<p class="line">Use when the host talks about spam calls.</p>
+<div class="file"><span>P08_Spam_calls_wall.mp4</span><a class="dl" href="clips/P08_Spam_calls_wall.mp4" download="P08_Spam_calls_wall.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p09">
+<video src="clips/P09_Auto_dialer.mp4#t=2.0" preload="metadata" controls playsinline muted loop aria-label="Shot P09"></video>
+<div class="meta"><span class="sid">P09</span><span class="len">4.3 s</span></div>
+<p class="line">Use when the host talks about robocalls.</p>
+<div class="file"><span>P09_Auto_dialer.mp4</span><a class="dl" href="clips/P09_Auto_dialer.mp4" download="P09_Auto_dialer.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p10">
+<video src="clips/P10_Unknown_caller_recents.mp4#t=0.8" preload="metadata" controls playsinline muted loop aria-label="Shot P10"></video>
+<div class="meta"><span class="sid">P10</span><span class="len">3.0 s</span></div>
+<p class="line">Use when the host talks about unknown callers.</p>
+<div class="file"><span>P10_Unknown_caller_recents.mp4</span><a class="dl" href="clips/P10_Unknown_caller_recents.mp4" download="P10_Unknown_caller_recents.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p11">
+<video src="clips/P11_Spam_notifications.mp4#t=1.5" preload="metadata" controls playsinline muted loop aria-label="Shot P11"></video>
+<div class="meta"><span class="sid">P11</span><span class="len">1.9 s</span></div>
+<p class="line">Use when the host talks about spam texts and emails.</p>
+<div class="file"><span>P11_Spam_notifications.mp4</span><a class="dl" href="clips/P11_Spam_notifications.mp4" download="P11_Spam_notifications.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p12">
+<video src="clips/P12_Tracking_across_sites.mp4#t=4.5" preload="metadata" controls playsinline muted loop aria-label="Shot P12"></video>
+<div class="meta"><span class="sid">P12</span><span class="len">6.6 s</span></div>
+<p class="line">Use when the host talks about being tracked online.</p>
+<div class="file"><span>P12_Tracking_across_sites.mp4</span><a class="dl" href="clips/P12_Tracking_across_sites.mp4" download="P12_Tracking_across_sites.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p13">
+<video src="clips/P13_Data_to_bad_actor.mp4#t=2.2" preload="metadata" controls playsinline muted loop aria-label="Shot P13"></video>
+<div class="meta"><span class="sid">P13</span><span class="len">2.4 s</span></div>
+<p class="line">Use when the host talks about data reaching scammers.</p>
+<div class="file"><span>P13_Data_to_bad_actor.mp4</span><a class="dl" href="clips/P13_Data_to_bad_actor.mp4" download="P13_Data_to_bad_actor.mp4">Download</a></div>
+</article>
+<article class="shot" id="shot-p14">
+<video src="clips/P14_Signup_data_shared.mp4#t=1.8" preload="metadata" controls playsinline muted loop aria-label="Shot P14"></video>
+<div class="meta"><span class="sid">P14</span><span class="len">2.1 s</span></div>
+<p class="line">Use with &ldquo;every time you sign up for something online.&rdquo;</p>
+<div class="file"><span>P14_Signup_data_shared.mp4</span><a class="dl" href="clips/P14_Signup_data_shared.mp4" download="P14_Signup_data_shared.mp4">Download</a></div>
+</article>
+</div>
+</section>
+
+<section aria-labelledby="h-proref">
+<div class="sec-head"><h2 id="h-proref">Problem reference cut</h2><p>The core problem shots in script order, as one clip.</p></div>
+<div class="ref">
+<video src="clips/Cloaked_Problem_BRoll_Reference.mp4#t=0.8" preload="metadata" controls playsinline muted aria-label="Full problem sequence"></video>
+<div class="ref-info">
+<h3>Full problem sequence</h3>
+<p class="muted">29.7 s &middot; Core shots P01 to P07, with P05 and P06a trimmed to 4 seconds</p>
+<div class="file"><span>Cloaked_Problem_BRoll_Reference.mp4</span><a class="dl" href="clips/Cloaked_Problem_BRoll_Reference.mp4" download="Cloaked_Problem_BRoll_Reference.mp4">Download</a></div>
+</div>
+</div>
+</section>
+
+<section aria-labelledby="h-dd">
+<div class="sec-head"><h2 id="h-dd">Do and don&rsquo;t</h2></div>
+<div class="verdicts">
+<div class="verdict do"><h3><span class="badge" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M3.5 8.5l3 3 6-7" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Do</h3>
+<ul><li>Match each clip to what the host is saying.</li><li>Trim and reorder clips to fit the read.</li><li>Add your own lower thirds, captions and music.</li><li>Show the partner URL and offer as your own graphic.</li></ul></div>
+<div class="verdict dont"><h3><span class="badge" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg></span>Don&rsquo;t</h3>
+<ul><li>Add text saying Cloaked removes 100% of your information.</li><li>Say Cloaked makes you anonymous or impossible to track.</li><li>Show uncensored personal information on screen.</li><li>Suggest every scan finds a Social Security number.</li><li>Recolor, crop, rotate or stretch the Cloaked logo.</li></ul></div>
+</div>
+</section>
+
+<section aria-labelledby="h-files">
+<div class="sec-head"><h2 id="h-files">Files</h2></div>
+<dl class="specs">
+<dt>Format</dt><dd>MP4 (H.264), 1920 &times; 1080, 16:9, 30 fps, no audio</dd>
+<dt>Solution shots</dt><dd>11 clips, 00 to 09</dd>
+<dt>Problem shots</dt><dd>15 clips: P01 to P07 core, P08 to P14 optional</dd>
+<dt>Reference cuts</dt><dd>One solution sequence (47.1 s) and one problem sequence (29.7 s)</dd>
+<dt>Masters</dt><dd>ProRes 422 HQ on request</dd>
+</dl>
+</section>
+</div>
+</body>
+</html>
